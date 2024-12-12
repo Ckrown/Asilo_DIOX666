@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Médico</title>
+    <link rel="Stylesheet" href="medico.css">
+   
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido, Médico</h1>
+        <p>Aquí puedes gestionar los datos de los pacientes.</p>
+        <div class="form-container">
+            <input type="text" id="nombrePaciente" placeholder="Nombre del paciente" required>
+            <input type="number" id="edadPaciente" placeholder="Edad del paciente" required>
+            <textarea id="diagnosticoPaciente" placeholder="Diagnóstico" required></textarea>
+            <button onclick="agregarPaciente()">Agregar Paciente</button>
+        </div>
+
+        <ul id="listaPacientes">
+        </ul>
+    </div>
+
+    <script>
+        function agregarPaciente() {
+            const nombre = document.getElementById('nombrePaciente').value;
+            const edad = document.getElementById('edadPaciente').value;
+            const diagnostico = document.getElementById('diagnosticoPaciente').value;
+
+            if (nombre && edad && diagnostico) {
+                const paciente = { nombre, edad, diagnostico };
+                const pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
+                pacientes.push(paciente);
+                
+                localStorage.setItem('pacientes', JSON.stringify(pacientes));
+
+                document.getElementById('nombrePaciente').value = '';
+                document.getElementById('edadPaciente').value = '';
+                document.getElementById('diagnosticoPaciente').value = '';
+                mostrarPacientes();
+            }
+        }
+
+
+        function mostrarPacientes() {
+            const pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
+            const listaPacientes = document.getElementById('listaPacientes');
+            listaPacientes.innerHTML = ''; // Limpiar lista antes de actualizar
+
+            pacientes.forEach((paciente, index) => {
+                const li = document.createElement('li');
+                li.classList.add('patient-card');
+                li.innerHTML = `
+                    <strong>Paciente ${index + 1}:</strong><br>
+                    Nombre: ${paciente.nombre}<br>
+                    Edad: ${paciente.edad} años<br>
+                    Diagnóstico: ${paciente.diagnostico}<br>
+                    <button onclick="editarPaciente(${index})">Editar</button>
+                `;
+                listaPacientes.appendChild(li);
+            });
+        }
+
+        function editarPaciente(index) {
+            alert(`Editar paciente ${index + 1}`);
+        }
+
+        window.onload = mostrarPacientes;
+    </script>
+</body>
+</html>

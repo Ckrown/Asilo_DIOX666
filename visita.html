@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Médico</title>
+    <link rel="Stylesheet" href="visita.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido, Médico</h1>
+        <p>Aquí puedes gestionar los datos de los pacientes.</p>
+        <ul>
+            <li>
+                Paciente 1: <button onclick="mostrarCarta('Paciente 1', 'Edad: 35 años\nDiagnóstico: Hipertensión')">Información general</button>
+            </li>
+            <li>
+                Paciente 2: <button onclick="mostrarCarta('Paciente 2', 'Edad: 42 años\nDiagnóstico: Diabetes')">Información general</button>
+            </li>
+            <li>
+                Paciente 3: <button onclick="mostrarCarta('Paciente 3', 'Edad: 28 años\nDiagnóstico: Asma')">Información general</button>
+            </li>
+        </ul>
+        <div class="card" id="infoCard">
+            <h2 id="cardTitle"></h2>
+            <p id="cardContent"></p>
+        </div>
+    </div>
+    <script>
+        function mostrarCarta(titulo, contenido) {
+            const card = document.getElementById('infoCard');
+            document.getElementById('cardTitle').innerText = titulo;
+            document.getElementById('cardContent').innerText = contenido;
+            card.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
