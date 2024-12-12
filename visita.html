@@ -20,10 +20,10 @@
                 <input type="text" placeholder="Primer Apellido" id="apellido" required>
 
                 <label for="rut">RUT:</label>
-                <input type="text" placeholder="Sin puntos y con guión" id="rut" required> 
+                <input type="number" placeholder="Sin puntos y con guión" id="rut" required> 
 
                 <label for="edad">Edad:</label>
-                <input type="number" placeholder="Mayor a 17" id="edad" min="19" max="119" required>
+                <input type="number" placeholder="Mayor a 17" id="edad" required>
 
                 <label for="residente">Residente a Visitar:</label>
                 <input type="text" id="residente" required>
@@ -69,10 +69,35 @@
             const residente = document.getElementById('residente').value;
             const fechaInput = document.getElementById('fechaVisita').value;
 
+         
+
+          
+
+            if (nombre.length < 3 || nombre.length > 50) {
+                alert("El nombre debe tener entre 3 y 50 caracteres.");
+                return;
+            }
+            if (apellido.length < 3 || nombre.length > 50) {
+                alert("El apellido debe tener entre 3 y 50 caracteres.");
+                return;
+            }
+
             if (!validarRUT(rut)) {
                 alert("RUT inválido. Por favor, verifica el RUT ingresado.");
                 return;
             }
+
+            if (edad < 18 || edad > 120) {
+                mostrarCarta("Error", "La edad debe ser mayor a 17.");
+                return;
+            }
+            
+            if (residente.length < 3 || nombre.length > 50) {
+                alert("El Nombre del residente debe tener entre 3 y 80 caracteres.");
+                return;
+            }
+
+            
 
             if (!nombre || !apellido || !rut || isNaN(edad) || !residente || !fechaInput) {
                 mostrarCarta("Error", "Por favor, completa todos los campos para spoder agendar.");
@@ -83,10 +108,6 @@
             const fechaHoy = new Date();
             fechaHoy.setHours(0, 0, 0, 0);
 
-            if (edad < 18 || edad > 120) {
-                mostrarCarta("Error", "La edad debe ser mayor a 17.");
-                return;
-            }
 
             if (fechaSeleccionada <= fechaHoy) {
                 mostrarCarta("Error", "La visita no puede ser agendada para hoy o días anteriores.");

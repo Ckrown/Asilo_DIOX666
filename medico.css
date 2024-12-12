@@ -8,6 +8,7 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
 }
+
 .container {
     background-color: white; 
     padding: 20px 30px;
@@ -16,35 +17,60 @@ body {
     max-width: 400px;
     width: 90%;
 }
+
 h1 {
     margin-bottom: 20px;
 }
+
 p {
     margin-bottom: 15px;
 }
+
 ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
+
 li {
     margin-bottom: 10px;
 }
+
 button {
-    padding: 5px 10px;
+    padding: 10px 20px;
     cursor: pointer;
     border: 1px solid #007BFF;
     background-color: #007BFF;
     color: white;
     border-radius: 5px;
     transition: background-color 0.3s ease;
+    margin-bottom: 10px;  /* Espacio entre botones */
 }
+
 button:hover {
     background-color: #0056b3;
 }
+
+/* Estilo específico para el botón de Cerrar Sesión */
+.logout-button {
+    background-color: #FF4C4C;  /* Rojo */
+    border: 1px solid #FF0000;   /* Borde rojo */
+}
+
+.logout-button:hover {
+    background-color: #cc3d3d;  /* Rojo oscuro al pasar el cursor */
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;  /* Los botones estarán apilados verticalmente */
+    gap: 15px;  /* Espacio entre los botones */
+}
+
 .form-container {
     margin-top: 20px;
 }
+
 input, textarea {
     width: 100%;
     padding: 8px;
@@ -52,6 +78,7 @@ input, textarea {
     border-radius: 5px;
     border: 1px solid #ddd;
 }
+
 .patient-card {
     margin-top: 15px;
     padding: 15px;
@@ -63,15 +90,14 @@ input, textarea {
 #listaPacientes {
     display: none; 
 }
+
 #formularioPaciente {
     display: none; 
 }
+
 .patient-card img {
     max-width: 100px; 
     height: auto;
-}
-#listaPacientes {
-    display: none; 
 }
 
 .qr-container {

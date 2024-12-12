@@ -15,7 +15,7 @@
         <div class="button-container">
             <button onclick="toggleFormulario()">Agregar Paciente</button>
             <button onclick="mostrarPacientes()">Ver Pacientes Registrados</button>
-            <button onclick="window.location.href='index.html'">Volver</button>
+            <button onclick="window.location.href='index.html'">Cerrar Sesion</button>
         </div>
 
         <div id="formularioPaciente" class="form-container">
@@ -68,6 +68,11 @@
                 alert("RUT inválido. Por favor, verifica el RUT ingresado.");
                 return;
             }
+
+            if (nombre.length < 3 || nombre.length > 50) {
+        alert("El nombre debe tener entre 3 y 50 caracteres.");
+        return;
+    }
 
             if (edad < 60 || edad > 120) {
         alert("La edad debe estar entre 60 y 120 años.");
