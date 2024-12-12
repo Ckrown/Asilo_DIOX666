@@ -4,29 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Médico</title>
-    <link rel="Stylesheet" href="visita.css">
+    <link rel="stylesheet" href="visita.css">
 </head>
 <body>
     <div class="container">
-        <h1>Bienvenido, Médico</h1>
-        <p>Aquí puedes gestionar los datos de los pacientes.</p>
-        <ul>
-            <li>
-                Paciente 1: <button onclick="mostrarCarta('Paciente 1', 'Edad: 35 años\nDiagnóstico: Hipertensión')">Información general</button>
-            </li>
-            <li>
-                Paciente 2: <button onclick="mostrarCarta('Paciente 2', 'Edad: 42 años\nDiagnóstico: Diabetes')">Información general</button>
-            </li>
-            <li>
-                Paciente 3: <button onclick="mostrarCarta('Paciente 3', 'Edad: 28 años\nDiagnóstico: Asma')">Información general</button>
-            </li>
-        </ul>
+        <h1>Bienvenido visita</h1>
+        <p>Aquí puedes agendar tu visita</p>
+
+        <div class="form-container">
+            <form id="formVisita" onsubmit="return false;">
+                <label for="nombre">Nombre:</label>
+                <input type="text" placeholder="Nombre completo" id="nombre" required>
+
+                <label for="apellido">Apellido:</label>
+                <input type="text" placeholder="Primer Apellido" id="apellido" required>
+
+                <label for="rut">RUT:</label>
+                <input type="text" placeholder="Sin puntos y con guión" id="rut" required> 
+
+                <label for="edad">Edad:</label>
+                <input type="number" placeholder="Mayor a 17" id="edad" min="19" max="119" required>
+
+                <label for="residente">Residente a Visitar:</label>
+                <input type="text" id="residente" required>
+
+                <label for="fechaVisita">Fecha de Visita:</label>
+                <input type="date" id="fechaVisita" required>
+
+                <button onclick="agendarVisita()">Agendar Visita</button>
+                <button onclick="window.location.href='index.html'">Volver</button>
+            </form>
+        </div>
+
         <div class="card" id="infoCard">
             <h2 id="cardTitle"></h2>
             <p id="cardContent"></p>
         </div>
     </div>
+
     <script>
+        function validarRUT(rut) {
+            rut = rut.replace(/\./g, '').replace('-', '');
+            const cuerpo = rut.slice(0, -1);
+            const dv = rut.slice(-1).toUpperCase();
+            let suma = 0;
+            let multiplo = 2;
+
+            for (let i = 1; i <= cuerpo.length; i++) {
+                suma += multiplo * cuerpo.charAt(cuerpo.length - i);
+                multiplo = multiplo < 7 ? multiplo + 1 : 2;
+            }
+
+            const dvEsperado = 11 - (suma % 11);
+            const dvReal = dv === 'K' ? 10 : dv === '0' ? 11 : dv;
+
+            return dvReal == dvEsperado;
+        }
+
+        function agendarVisita() {
+            const nombre = document.getElementById('nombre').value;
+            const apellido = document.getElementById('apellido').value;
+            const rut = document.getElementById('rut').value;
+            const edad = parseInt(document.getElementById('edad').value);
+            const residente = document.getElementById('residente').value;
+            const fechaInput = document.getElementById('fechaVisita').value;
+
+            if (!validarRUT(rut)) {
+                alert("RUT inválido. Por favor, verifica el RUT ingresado.");
+                return;
+            }
+
+            if (!nombre || !apellido || !rut || isNaN(edad) || !residente || !fechaInput) {
+                mostrarCarta("Error", "Por favor, completa todos los campos para spoder agendar.");
+                return;
+            }
+
+            const fechaSeleccionada = new Date(fechaInput + 'T00:00:00');
+            const fechaHoy = new Date();
+            fechaHoy.setHours(0, 0, 0, 0);
+
+            if (edad < 18 || edad > 120) {
+                mostrarCarta("Error", "La edad debe ser mayor a 17.");
+                return;
+            }
+
+            if (fechaSeleccionada <= fechaHoy) {
+                mostrarCarta("Error", "La visita no puede ser agendada para hoy o días anteriores.");
+                return;
+            }
+
+            mostrarCarta("Visita Agendada", `Tu visita ha sido agendada para el ${fechaSeleccionada.toLocaleDateString()} para ${nombre} ${apellido} (RUT: ${rut}) visitando a ${residente}.`);
+        }
+
         function mostrarCarta(titulo, contenido) {
             const card = document.getElementById('infoCard');
             document.getElementById('cardTitle').innerText = titulo;

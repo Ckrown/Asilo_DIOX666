@@ -5,26 +5,11 @@
     <meta name="viewport" content="width=device-width, content-scale=1.0">
     <title>Panel Médico</title>
     <link rel="stylesheet" href="medico.css">
-    <style>
-        #listaPacientes {
-            display: none; 
-        }
-        #formularioPaciente {
-            display: none; 
-        }
-        .patient-card {
-            text-align: center; 
-            margin-bottom: 20px; 
-        }
-        .patient-card img {
-            max-width: 100px; 
-            height: auto;
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Bienvenido, Médico</h1>
+        <h1>Bienvenido a DIOX_666, Médico</h1>
         <p>Aquí puedes gestionar los datos de los pacientes.</p>
 
         <div class="button-container">
@@ -34,7 +19,7 @@
         </div>
 
         <div id="formularioPaciente" class="form-container">
-            <input type="text" id="nombrePaciente" placeholder="Nombre del paciente" required>
+            <input type="text" id="nombrePaciente" placeholder="Nombre Completo del paciente sin tilde" required>
             <input type="text" id="rutPaciente" placeholder="RUT (Ej: 12345678-9)" required>
             <input type="number" id="edadPaciente" placeholder="Edad del paciente (60-120)" min="60" max="120" required>
             <textarea id="diagnosticoPaciente" placeholder="Diagnóstico" required></textarea>
@@ -103,7 +88,6 @@
                     
                     localStorage.setItem('pacientes', JSON.stringify(pacientes));
 
-       
                     document.getElementById('nombrePaciente').value = '';
                     document.getElementById('rutPaciente').value = '';
                     document.getElementById('edadPaciente').value = '';
@@ -142,11 +126,25 @@
                     <img src="${paciente.imagen}" alt="Imagen de ${paciente.nombre}">
                     <button onclick="editarPaciente(${index})">Editar</button>
                     <button onclick="confirmarEliminar(${index})">Eliminar</button>
+                    <button onclick="generarQR(${index})">Generar QR</button>
+                    <canvas id="qrCanvas${index}" style="display:none;"></canvas>
                 `;
                 listaPacientes.appendChild(li);
             });
 
             listaPacientes.style.display = listaPacientes.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function generarQR(index) {
+            const pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
+            const paciente = pacientes[index];
+
+            const qr = new QRious({
+                element: document.getElementById(`qrCanvas${index}`),
+                value: `Nombre: ${paciente.nombre}, Enfermedad: ${paciente.enfermedades}, Diagnostico: ${paciente.diagnostico}, Direccion: Antonio Varas 666`,
+                size: 150
+            });
+            document.getElementById(`qrCanvas${index}`).style.display = 'block'; 
         }
 
         function toggleFormulario() {
@@ -169,7 +167,6 @@
             document.getElementById('medicamentosPaciente').value = paciente.medicamentos;
             document.getElementById('parientesCercanos').value = paciente.parientesCercanos;
 
-          
             eliminarPaciente(index);
             toggleFormulario(); 
         }
