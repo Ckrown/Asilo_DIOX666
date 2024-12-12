@@ -2,51 +2,129 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, content-scale=1.0">
     <title>Panel Médico</title>
-    <link rel="Stylesheet" href="medico.css">
-   
+    <link rel="stylesheet" href="medico.css">
+    <style>
+        #listaPacientes {
+            display: none; 
+        }
+        #formularioPaciente {
+            display: none; 
+        }
+        .patient-card {
+            text-align: center; 
+            margin-bottom: 20px; 
+        }
+        .patient-card img {
+            max-width: 100px; 
+            height: auto;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Bienvenido, Médico</h1>
         <p>Aquí puedes gestionar los datos de los pacientes.</p>
-        <div class="form-container">
-            <input type="text" id="nombrePaciente" placeholder="Nombre del paciente" required>
-            <input type="number" id="edadPaciente" placeholder="Edad del paciente" required>
-            <textarea id="diagnosticoPaciente" placeholder="Diagnóstico" required></textarea>
-            <button onclick="agregarPaciente()">Agregar Paciente</button>
+
+        <div class="button-container">
+            <button onclick="toggleFormulario()">Agregar Paciente</button>
+            <button onclick="mostrarPacientes()">Ver Pacientes Registrados</button>
+            <button onclick="window.location.href='index.html'">Volver</button>
         </div>
 
-        <ul id="listaPacientes">
-        </ul>
+        <div id="formularioPaciente" class="form-container">
+            <input type="text" id="nombrePaciente" placeholder="Nombre del paciente" required>
+            <input type="text" id="rutPaciente" placeholder="RUT (Ej: 12345678-9)" required>
+            <input type="number" id="edadPaciente" placeholder="Edad del paciente (60-120)" min="60" max="120" required>
+            <textarea id="diagnosticoPaciente" placeholder="Diagnóstico" required></textarea>
+            <input type="file" id="imagenPaciente" accept="image/*" required>
+            <textarea id="enfermedadesPaciente" placeholder="Enfermedades" required></textarea>
+            <textarea id="historialMedico" placeholder="Historial Médico" required></textarea>
+            <textarea id="medicamentosPaciente" placeholder="Medicamentos" required></textarea>
+            <textarea id="parientesCercanos" placeholder="Información de parientes cercanos" required></textarea>
+            <button onclick="agregarPaciente()">Agregar</button>
+        </div>
+
+        <ul id="listaPacientes"></ul>
     </div>
 
     <script>
-        function agregarPaciente() {
-            const nombre = document.getElementById('nombrePaciente').value;
-            const edad = document.getElementById('edadPaciente').value;
-            const diagnostico = document.getElementById('diagnosticoPaciente').value;
+        function validarRUT(rut) {
+            rut = rut.replace(/\./g, '').replace('-', '');
+            const cuerpo = rut.slice(0, -1);
+            const dv = rut.slice(-1).toUpperCase();
+            let suma = 0;
+            let multiplo = 2;
 
-            if (nombre && edad && diagnostico) {
-                const paciente = { nombre, edad, diagnostico };
-                const pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
-                pacientes.push(paciente);
-                
-                localStorage.setItem('pacientes', JSON.stringify(pacientes));
-
-                document.getElementById('nombrePaciente').value = '';
-                document.getElementById('edadPaciente').value = '';
-                document.getElementById('diagnosticoPaciente').value = '';
-                mostrarPacientes();
+            for (let i = 1; i <= cuerpo.length; i++) {
+                suma += multiplo * cuerpo.charAt(cuerpo.length - i);
+                multiplo = multiplo < 7 ? multiplo + 1 : 2;
             }
+
+            const dvEsperado = 11 - (suma % 11);
+            const dvReal = dv === 'K' ? 10 : dv === '0' ? 11 : dv;
+
+            return dvReal == dvEsperado;
         }
 
+        function agregarPaciente() {
+            const nombre = document.getElementById('nombrePaciente').value;
+            const rut = document.getElementById('rutPaciente').value;
+            const edad = document.getElementById('edadPaciente').value;
+            const diagnostico = document.getElementById('diagnosticoPaciente').value;
+            const imagen = document.getElementById('imagenPaciente').files[0];
+            const enfermedades = document.getElementById('enfermedadesPaciente').value;
+            const historialMedico = document.getElementById('historialMedico').value;
+            const medicamentos = document.getElementById('medicamentosPaciente').value;
+            const parientesCercanos = document.getElementById('parientesCercanos').value;
+
+            if (!validarRUT(rut)) {
+                alert("RUT inválido. Por favor, verifica el RUT ingresado.");
+                return;
+            }
+
+            if (nombre && rut && edad && diagnostico && imagen && enfermedades && historialMedico && medicamentos && parientesCercanos) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const paciente = {
+                        nombre,
+                        rut,
+                        edad,
+                        diagnostico,
+                        imagen: event.target.result, 
+                        enfermedades,
+                        historialMedico,
+                        medicamentos,
+                        parientesCercanos
+                    };
+                    const pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
+                    pacientes.push(paciente);
+                    
+                    localStorage.setItem('pacientes', JSON.stringify(pacientes));
+
+       
+                    document.getElementById('nombrePaciente').value = '';
+                    document.getElementById('rutPaciente').value = '';
+                    document.getElementById('edadPaciente').value = '';
+                    document.getElementById('diagnosticoPaciente').value = '';
+                    document.getElementById('imagenPaciente').value = '';
+                    document.getElementById('enfermedadesPaciente').value = '';
+                    document.getElementById('historialMedico').value = '';
+                    document.getElementById('medicamentosPaciente').value = '';
+                    document.getElementById('parientesCercanos').value = '';
+
+                    toggleFormulario();
+                    mostrarPacientes();                 
+                };
+                reader.readAsDataURL(imagen);  
+            }
+        }
 
         function mostrarPacientes() {
             const pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
             const listaPacientes = document.getElementById('listaPacientes');
-            listaPacientes.innerHTML = ''; // Limpiar lista antes de actualizar
+            listaPacientes.innerHTML = ''; 
 
             pacientes.forEach((paciente, index) => {
                 const li = document.createElement('li');
@@ -54,19 +132,69 @@
                 li.innerHTML = `
                     <strong>Paciente ${index + 1}:</strong><br>
                     Nombre: ${paciente.nombre}<br>
+                    RUT: ${paciente.rut}<br>
                     Edad: ${paciente.edad} años<br>
                     Diagnóstico: ${paciente.diagnostico}<br>
+                    Enfermedades: ${paciente.enfermedades}<br>
+                    Historial Médico: ${paciente.historialMedico}<br>
+                    Medicamentos: ${paciente.medicamentos}<br>
+                    Información de Parientes: ${paciente.parientesCercanos}<br>
+                    <img src="${paciente.imagen}" alt="Imagen de ${paciente.nombre}">
                     <button onclick="editarPaciente(${index})">Editar</button>
+                    <button onclick="confirmarEliminar(${index})">Eliminar</button>
                 `;
                 listaPacientes.appendChild(li);
             });
+
+            listaPacientes.style.display = listaPacientes.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleFormulario() {
+            const formulario = document.getElementById('formularioPaciente');
+            const lista = document.getElementById('listaPacientes');
+            formulario.style.display = (formulario.style.display === 'block') ? 'none' : 'block';
+            lista.style.display = 'none';
         }
 
         function editarPaciente(index) {
-            alert(`Editar paciente ${index + 1}`);
+            const pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
+            const paciente = pacientes[index];
+
+            document.getElementById('nombrePaciente').value = paciente.nombre;
+            document.getElementById('rutPaciente').value = paciente.rut;
+            document.getElementById('edadPaciente').value = paciente.edad;
+            document.getElementById('diagnosticoPaciente').value = paciente.diagnostico;
+            document.getElementById('enfermedadesPaciente').value = paciente.enfermedades;
+            document.getElementById('historialMedico').value = paciente.historialMedico;
+            document.getElementById('medicamentosPaciente').value = paciente.medicamentos;
+            document.getElementById('parientesCercanos').value = paciente.parientesCercanos;
+
+          
+            eliminarPaciente(index);
+            toggleFormulario(); 
         }
 
-        window.onload = mostrarPacientes;
+        function confirmarEliminar(index) {
+            const clave = prompt("Por favor, ingresa la clave para confirmar la eliminación:");
+            if (clave) {
+                eliminarPaciente(index);
+            } else {
+                alert("La eliminación fue cancelada.");
+            }
+        }
+
+        function eliminarPaciente(index) {
+            const pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
+            pacientes.splice(index, 1); 
+
+            localStorage.setItem('pacientes', JSON.stringify(pacientes)); 
+            mostrarPacientes(); 
+        }
+
+        window.onload = () => {
+            document.getElementById('listaPacientes').style.display = 'none';
+            document.getElementById('formularioPaciente').style.display = 'none';
+        };
     </script>
 </body>
 </html>
