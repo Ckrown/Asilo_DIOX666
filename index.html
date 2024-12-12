@@ -21,28 +21,27 @@
                 <label for="password">Contraseña</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <div class="form-group role-container">
-                <label for="role">Tipo de Usuario</label>
-                <select id="role" name="role" required>
-                    <option value="medico">Médico</option>
-                    <option value="visita">Visita/Usuario</option>
-                </select>
+            <div class="button-group">
+                <button type="button" class="btn" onclick="validateAndRedirect()">Ingresar</button>
+                <button type="button" class="btn" onclick="goToVisita()">Visita</button>
             </div>
-            <button type="submit" class="btn">Ingresar</button>
         </form>
     </div>
 
     <script>
-        function handleLogin(event) {
-            event.preventDefault();
+        function validateAndRedirect() {
             const username = document.getElementById("username").value;
-            const role = document.getElementById("role").value;
-
-            if (role === "medico") {
-                window.location.href = "medico.html";
-            } else if (role === "visita") {
-                window.location.href = "visita.html";
+            const password = document.getElementById("password").value;
+    
+            if (username && password) {
+                window.location.href = "medico.html"; 
+            } else {
+                alert("Por favor, completa los campos para ingresar.");
             }
+        }
+    
+        function goToVisita() {
+            window.location.href = "visita.html"; 
         }
     </script>
 </body>

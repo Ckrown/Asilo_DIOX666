@@ -20,9 +20,9 @@
 
         <div id="formularioPaciente" class="form-container">
             <input type="text" id="nombrePaciente" placeholder="Nombre Completo del paciente sin tilde" required>
-            <input type="text" id="rutPaciente" placeholder="RUT (Ej: 12345678-9)" required>
+            <input type="text" id="rutPaciente" placeholder="RUT (Sin guión o con guión)" required>
             <input type="number" id="edadPaciente" placeholder="Edad del paciente (60-120)" min="60" max="120" required>
-            <textarea id="diagnosticoPaciente" placeholder="Diagnóstico" required></textarea>
+            <textarea id="diagnosticoPaciente" placeholder="Alergias" required></textarea>
             <input type="file" id="imagenPaciente" accept="image/*" required>
             <textarea id="enfermedadesPaciente" placeholder="Enfermedades" required></textarea>
             <textarea id="historialMedico" placeholder="Historial Médico" required></textarea>
@@ -69,6 +69,12 @@
                 return;
             }
 
+            if (edad < 60 || edad > 120) {
+        alert("La edad debe estar entre 60 y 120 años.");
+        return;
+    }
+
+           
             if (nombre && rut && edad && diagnostico && imagen && enfermedades && historialMedico && medicamentos && parientesCercanos) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
@@ -141,7 +147,8 @@
 
             const qr = new QRious({
                 element: document.getElementById(`qrCanvas${index}`),
-                value: `Nombre: ${paciente.nombre}, Enfermedad: ${paciente.enfermedades}, Diagnostico: ${paciente.diagnostico}, Direccion: Antonio Varas 666`,
+                value: `Nombre: ${paciente.nombre}, Enfermedad: ${paciente.enfermedades}, Alergias: ${paciente.diagnostico}, 
+                Direccion: Antonio Varas 666, caso de emergencia llamar al +56994395627`,
                 size: 150
             });
             document.getElementById(`qrCanvas${index}`).style.display = 'block'; 
